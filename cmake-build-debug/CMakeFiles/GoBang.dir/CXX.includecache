@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ffacs/Codes/Projects/GoBang/main.cpp
+iostream
+-
+src/StateJudge.h
+/home/ffacs/Codes/Projects/GoBang/src/StateJudge.h
+src/dfs.h
+/home/ffacs/Codes/Projects/GoBang/src/dfs.h
+unistd.h
+-
+
+/home/ffacs/Codes/Projects/GoBang/src/StateJudge.h
+vector
+-
+cstring
+-
+
+/home/ffacs/Codes/Projects/GoBang/src/dfs.h
+StateJudge.h
+/home/ffacs/Codes/Projects/GoBang/src/StateJudge.h
+

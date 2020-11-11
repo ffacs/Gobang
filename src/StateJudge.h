@@ -18,15 +18,19 @@ int Energy[BOARD_SIZE][BOARD_SIZE];
 using ll =long long;
 using MINMAX=std::pair<ll,ll>;
 const ll INF=2e18;
-ll powerOf10[20]={1};
+ll powerOf10[20]={1,10,100,1000,10000,100000,1000000,10000000,100000000,1000000000};
+const int DIRCTION=8;
+int Xdirction[]={1,1,1,0,-1,-1,-1,0};
+int Ydirction[]={-1,0,1,1,1,0,-1,-1};
 
-ll func_judge(const vector<int>& V,int col) {
+
+ll func_judge(const int* V,int col) {
     bool haveWhite=false,haveBlack=false;
-    for(auto x:V) if(x==-1) haveWhite= true;else if(x==1) haveBlack= true;
+    for(int i=0;i<5;i++) if(V[i]==-1) haveWhite= true;else if(V[i]==1) haveBlack= true;
     if(!(haveWhite^haveBlack)) return 0;
     int len=0,lm=1,cnt=0;
-    for(auto x:V) {
-        if(x==0) {if(len) lm*=len;len=0;}
+    for(int i=0;i<5;i++) {
+        if(V[i]==0) {if(len) lm*=len;len=0;}
         else len++,cnt++;
     }if(len) lm*=len;
     ll flag=1;
@@ -34,49 +38,35 @@ ll func_judge(const vector<int>& V,int col) {
     return flag*lm*powerOf10[cnt];
 }
 
-inline vector<int> rowChess(int y,int x) { //row judge
-    vector<int> V(5);
-    for(int i=0;i<5;i++) V[i]=Board[y+i][x];
-    return V;
-}
-
-inline vector<int> colChess(int y,int x){ //column judge
-    vector<int> V(5);
-    for(int i=0;i<5;i++) V[i]=Board[y][x+i];
-    return V;
-}
-
-inline vector<int> leftDiagonalChess(int y,int x){//left diagonal
-    vector<int> V(5);
-    for(int i=0;i<5;i++) V[i]=Board[y+i][x+i];
-    return V;
-}
-
-inline vector<int> rightDiagonalChess(int y,int x){//right diagonal
-    vector<int> V(5);
-    for(int i=0;i<5;i++) V[i]=Board[y+i][x-i];
-    return V;
+int isGameOver() {
+    for(int d=0;d<DIRCTION/2;d++) {
+        for(int i=0;i<BOARD_SIZE;i++) {
+            if(i+4*Ydirction[d]<0||i+4*Ydirction[d]>=BOARD_SIZE) continue;
+            for(int j=0;j<BOARD_SIZE;j++) {
+                if(j+4*Xdirction[d]<0||j+4*Xdirction[d]>=BOARD_SIZE) continue;
+                int V[5];for(int k=0;k<5;k++) V[k]=Board[i+k*Ydirction[d]][j+k*Xdirction[d]];
+                if(V[0]==0) {continue;}for(int k=1;k<5;k++) if(V[k]!=V[0]) continue;
+                return V[0];
+            }
+        }
+    }
+    return 0;
 }
 
 MINMAX stateJudge(int col) {
     ll stateJudgement=0;
-//    MINMAX res={INF,-INF};
-    for(int i=0;i<BOARD_SIZE;i++) {
-        for(int j=0;j<BOARD_SIZE;j++) {
-            if(i+5<=BOARD_SIZE) stateJudgement+=func_judge(rowChess(i,j),col);
-            if(j+5<=BOARD_SIZE) stateJudgement+=func_judge(colChess(i,j),col);
-            if(i+5<=BOARD_SIZE&&j+5<=BOARD_SIZE) stateJudgement+=func_judge(leftDiagonalChess(i,j),col);
-            if(i+5<=BOARD_SIZE&&j>=4) stateJudgement+=func_judge(rightDiagonalChess(i,j),col);
-
-//            if(i+5<=BOARD_SIZE) stateJudgement=std::max(stateJudgement,func_judge(rowChess(i,j),col));
-//            if(j+5<=BOARD_SIZE) stateJudgement=func_judge(colChess(i,j),col);
-//            if(i+5<=BOARD_SIZE&&j+5<=BOARD_SIZE) stateJudgement+=func_judge(leftDiagonalChess(i,j),col);
-//            if(i+5<=BOARD_SIZE&&j>=4) stateJudgement+=func_judge(rightDiagonalChess(i,j),col);
+    for(int d=0;d<DIRCTION;d++) {
+        for(int i=0;i<BOARD_SIZE;i++) {
+            if(i+4*Ydirction[d]<0||i+4*Ydirction[d]>=BOARD_SIZE) continue;
+            for(int j=0;j<BOARD_SIZE;j++) {
+                if(j+4*Xdirction[d]<0||j+4*Xdirction[d]>=BOARD_SIZE) continue;
+                int V[5];for(int k=0;k<5;k++) V[k]=Board[i+k*Ydirction[d]][j+k*Xdirction[d]];
+                ll nowStatus=func_judge(V,col);
+                stateJudgement+=nowStatus;
+            }
         }
     }
     return {stateJudgement,stateJudgement};
-//    return res;
 }
-
 
 #endif //GOBANG_STATEJUDGE_H

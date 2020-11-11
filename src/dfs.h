@@ -10,6 +10,13 @@
 MINMAX dfs(int dep,int y,int x,int col,int fun,const MINMAX& last) {
     Board[y][x]=col;
     MINMAX res={INF,-INF};
+    int gameoverCol=0;
+    if(gameoverCol==isGameOver()) {
+        if(col==gameoverCol) res.second=INF;
+        else  res.first=-INF;
+        Board[y][x]=0;
+        return res;
+    }
     if(fun==0) res.first=last.first;
     else res.second=last.second;
     if(dep==0) { Board[y][x]=0;return stateJudge(col); }
